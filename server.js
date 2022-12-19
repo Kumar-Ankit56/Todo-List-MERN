@@ -118,8 +118,8 @@ app.post("/", function (req, res) {
     List.findOne({ name: listName }, function (err, foundList) {
       foundList.items.push(item);
       foundList.save();
-      if(!err){
-       res.redirect("/" + listName);
+      if (!err) {
+        res.redirect("/" + listName);
       }
     });
   }
@@ -127,23 +127,27 @@ app.post("/", function (req, res) {
 
 //delete content by checking checkbox
 app.post("/delete", (req, res) => {
-    const checkedItemId = req.body.checkbox;
-    const listName = req.body.listName;
-  
-    if (listName === "Today") {
-      Item.findByIdAndRemove(checkedItemId, function(err){
+  const checkedItemId = req.body.checkbox;
+  const listName = req.body.listName;
+
+  if (listName === "Today") {
+    Item.findByIdAndRemove(checkedItemId, function (err) {
+      if (!err) {
+        console.log("Successfully deleted checked item.");
+        res.redirect("/");
+      }
+    });
+  } else {
+    List.findOneAndUpdate(
+      { name: listName },
+      { $pull: { items: { _id: checkedItemId } } },
+      function (err, foundList) {
         if (!err) {
-          console.log("Successfully deleted checked item.");
-          res.redirect("/");
-        }
-      });
-    } else {
-      List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: checkedItemId}}}, function(err, foundList){
-        if (!err){
           res.redirect("/" + listName);
         }
-      });
-    }
+      }
+    );
+  }
 });
 
 app.listen(`${process.env.PORT}`, () => {
