@@ -23,9 +23,14 @@ mongoose
     //console.log(con.connections);
     console.log("Successfull");
   })
-  .catch((e) => {
-    console.log("not connected");
-  });
+  .catch(
+    (e) => {
+      console.log("not connected");
+    },
+    app.listen(`${process.env.PORT}`, () => {
+      console.log(`Server has started at ${process.env.PORT}`);
+    })
+  );
 
 //Creating New Schema for Item
 const itemSchema = new mongoose.Schema({
@@ -148,8 +153,4 @@ app.post("/delete", (req, res) => {
       }
     );
   }
-});
-
-app.listen(`${process.env.PORT}`, () => {
-  console.log(`Server has started at ${process.env.PORT}`);
 });
